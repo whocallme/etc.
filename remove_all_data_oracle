@@ -1,0 +1,79 @@
+oracle db
+using sql plus
+
+1. 모든 테이블 삭제
+BEGIN
+   FOR cur IN (SELECT table_name FROM user_tables) LOOP
+      EXECUTE IMMEDIATE 'DROP TABLE ' || cur.table_name || ' CASCADE CONSTRAINTS';
+   END LOOP;
+END;
+/
+
+2. 모든 트리거 삭제
+BEGIN
+   FOR cur IN (SELECT trigger_name FROM user_triggers) LOOP
+      EXECUTE IMMEDIATE 'DROP TRIGGER ' || cur.trigger_name;
+   END LOOP;
+END;
+/
+
+3. 모든 시퀀스 삭제
+BEGIN
+   FOR cur IN (SELECT sequence_name FROM user_sequences) LOOP
+      EXECUTE IMMEDIATE 'DROP SEQUENCE ' || cur.sequence_name;
+   END LOOP;
+END;
+/
+
+4. 모든 인덱스 삭제
+BEGIN
+   FOR cur IN (SELECT index_name FROM user_indexes WHERE table_name NOT LIKE 'SYS%') LOOP
+      EXECUTE IMMEDIATE 'DROP INDEX ' || cur.index_name;
+   END LOOP;
+END;
+/
+기본적으로 테이블을 삭제하면 인덱스도 자동으로 삭제됨
+
+5. 뷰 삭제
+BEGIN
+   FOR cur IN (SELECT view_name FROM user_views) LOOP
+      EXECUTE IMMEDIATE 'DROP VIEW ' || cur.view_name;
+   END LOOP;
+END;
+/
+
+6. 모든 프로시저 및 함수 삭제
+BEGIN
+   FOR cur IN (SELECT object_name FROM user_procedures WHERE object_type = 'PROCEDURE') LOOP
+      EXECUTE IMMEDIATE 'DROP PROCEDURE ' || cur.object_name;
+   END LOOP;
+
+   FOR cur IN (SELECT object_name FROM user_procedures WHERE object_type = 'FUNCTION') LOOP
+      EXECUTE IMMEDIATE 'DROP FUNCTION ' || cur.object_name;
+   END LOOP;
+END;
+/
+
+7. 모든 패키지 삭제
+BEGIN
+   FOR cur IN (SELECT object_name FROM user_objects WHERE object_type = 'PACKAGE') LOOP
+      EXECUTE IMMEDIATE 'DROP PACKAGE ' || cur.object_name;
+   END LOOP;
+END;
+/
+
+8. 모든 동의어 삭제
+BEGIN
+   FOR cur IN (SELECT synonym_name FROM user_synonyms) LOOP
+      EXECUTE IMMEDIATE 'DROP SYNONYM ' || cur.synonym_name;
+   END LOOP;
+END;
+/
+
+9. 최종 확인
+삭제된 객체 목록을 확인하려면:
+
+SELECT table_name FROM user_tables;  -- 테이블 목록
+SELECT trigger_name FROM user_triggers;  -- 트리거 목록
+SELECT sequence_name FROM user_sequences;  -- 시퀀스 목록
+SELECT view_name FROM user_views;  -- 뷰 목록
